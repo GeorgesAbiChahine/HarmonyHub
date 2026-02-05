@@ -1,123 +1,107 @@
-<div align="center">
-  <img width="561" height="212" alt="image" src="https://github.com/user-attachments/assets/f9a451aa-8237-4aa6-a335-df192f5682a7" />
+# HarmonyHub: Adaptive, Accessible Music Practice
 
-</div>
+Open-source toolkit for generating **inclusive, pedagogically sound music exercises** from structured prompts. HarmonyHub pairs rule-based + AI-assisted generation with accessibility-first outputs (MIDI/MP3/JSON/notation variants) to support teachers, students, and researchers.
 
-<h1 align="center">GSoC 2025(INCF)</h1>
+> Built in the open with INCF / Google Summer of Code 2025 roots—now welcoming contributors, classrooms, and research partners.
 
+## Quick Links
+- [Get Started](#get-started)
+- [CLI Usage](#cli-usage)
+- [Repo Structure](#repo-structure)
+- [Contribute](#contribute)
+- [Academic & Classroom Use](#academic--classroom-use)
+- [Roadmap](#roadmap)
+- [Community Principles](#community-principles)
 
-## **Project Title:** *HarmonyHub: Using Generative AI for Adaptive Learning in Music CLI Version*  
-**Organization:** INCF  
-**Contributor:** **Priyanshu Tiwari**  
-**Mentors:** Alberto Acquilino • Mirko D'Andrea • Keerthi Reddy Kambham • Thrun • Oscar  
-**Hugging Face Repo:** [🔗 Music LLM](https://huggingface.co/spaces/SHIKARICHACHA/adaptive-music-exercise-generator)
+## Why HarmonyHub
+Traditional method books assume a “standard” learner. HarmonyHub flips that by generating practice materials that adapt to the learner: key, level, time signature, focus, and accessibility needs. Outputs can be visual, auditory, or multi-sensory—ready for classrooms, community music programs, or individual study.
 
----
+## Features at a Glance
+- 🎛️ Promptable exercise generation (instrument, level, key, time signature, focus).
+- 🎼 Multi-format outputs: JSON, MIDI, MP3; visualizations via piano roll. (MusicXML and adapted notation pathways in progress.)
+- ♿ Accessibility-first: enlarged/colored notation plans, Braille-friendly melodic export (simple melodies), and OSC/MIDI hooks for haptics.
+- 🧠 Pedagogical controls: rhythmic complexity, practice focus, tempo, measure length.
+- 🧰 Self-contained CLI plus modular Python library for research and integrations.
 
-## 📜 **Executive Summary**
-
-**HarmonyHub** is an **AI-driven adaptive music education platform** that leverages the **Mistral LLM API** to generate **personalized, rhythmically precise, and melodically coherent** practice exercises in real time. Designed for **students, educators, and self-taught musicians**, the system dynamically adapts to user-defined parameters:
-
-- 🎹 **Instrument**: Piano, Violin, Trumpet, Clarinet, Flute
-- 🔤 **Difficulty Level**: Beginner, Intermediate, Advanced
-- ⏱ **Time Signature & Key**: e.g., 4/4 in C Major, 6/8 in A Minor
-- 🎯 **Practice Focus**: Rhythmic, Melodic, Technical, Expressive, Sight-Reading, Improvisation
-- 🎼 **Rhythmic Complexity**: Basic, Syncopated, Polyrhythmic
-
-Generated exercises are delivered in **MIDI**, **MP3**, and **JSON** formats, accompanied by:
-- Real-time **sheet music visualization** via VexFlow
-- Interactive **AI music theory assistant**
-- No-code **Gradio interface** for instant access
-
-HarmonyHub bridges **generative AI** and **music cognition**, offering an intelligent, accessible, and scalable tool for modern music pedagogy.
-
-## Project Structure
-
-The project has been refactored into a modular structure:
-
-```
-├── lib/                    # Core music generation functionality
-│   └── music_generation/   # Music generation modules
-│       ├── constants.py    # Configuration and constants
-│       ├── generator.py    # Exercise generation logic
-│       └── theory.py       # Music theory helpers
-├── processing/             # Processing modules
-│   ├── audio/              # Audio processing
-│   │   └── converter.py    # MIDI to audio conversion
-│   ├── midi/               # MIDI processing
-│   │   └── converter.py    # JSON to MIDI conversion
-│   └── visualization/      # Visualization tools
-│       └── visualizer.py   # Piano roll visualization
-├── tests/                  # Test suite
-│   ├── lib/                # Tests for lib modules
-│   └── processing/         # Tests for processing modules
-├── cli.py                  # Command-line interface
-└── requirements.txt        # Project dependencies
-```
-
-## Installation
+## Get Started
+Prereqs: Python 3.10+ recommended; `fluidsynth` optional but improves audio quality.
 
 ```bash
 pip install -r requirements.txt
+# Optional: ensure fluidsynth is available for rich soundfonts
 ```
 
-## Usage
-
-### Generate a music exercise
-
+### Smoke test
 ```bash
 python cli.py generate --instrument Trumpet --level Intermediate --key "C Major" --time-signature "4/4" --measures 4 --output-format all
 ```
+Outputs are saved under `./output` (JSON, MIDI, MP3, visualization PNG when `--output-format all`).
 
-### Generate a metronome track
-
+## CLI Usage
+- Generate exercise
+```bash
+python cli.py generate --instrument Piano --level Beginner --key "G Major" --time-signature "3/4" --measures 8 --tempo 72 --output-format all
+```
+- Metronome
 ```bash
 python cli.py metronome --tempo 60 --time-signature "4/4" --measures 4
 ```
-
-### Convert a JSON exercise to MIDI or MP3
-
+- Convert saved JSON to MIDI/MP3
 ```bash
-python cli.py convert --input-file exercise.json --output-format mp3 --instrument Piano
+python cli.py convert --input-file exercise.json --output-format mp3 --instrument Flute
 ```
-
-### Display available options
-
+- Discover options
 ```bash
 python cli.py info
 ```
 
-## Module Overview
-
-### lib/music_generation
-
-- **constants.py**: Configuration values and constants
-- **generator.py**: Core music generation logic using LLM
-- **theory.py**: Music theory helpers for note conversion
-
-### processing/midi
-
-- **converter.py**: Convert JSON note data to MIDI files
-
-### processing/audio
-
-- **converter.py**: Convert MIDI files to MP3 audio
-
-### processing/visualization
-
-- **visualizer.py**: Generate piano roll visualizations
-
-## Testing
-
-Run the test suite:
-
-```bash
-python -m unittest discover tests
+## Repo Structure
+```
+├── lib/
+│   └── music_generation/
+│       ├── constants.py      # Config + URLs for models/soundfonts
+│       ├── generator.py      # Exercise generation pipeline
+│       └── theory.py         # Music theory helpers
+├── processing/
+│   ├── midi/converter.py     # JSON → MIDI
+│   ├── audio/converter.py    # MIDI → MP3 (soundfonts + fallback)
+│   └── visualization/visualizer.py  # Piano roll render
+├── cli.py                    # Typer-based CLI
+├── tests/                    # Unit tests
+├── requirements.txt
+└── Dockerfile
 ```
 
-## Error Handling
+## Contribute
+We welcome open-source contributors, students, and mentors.
+- **Issues & Ideas:** Start a GitHub issue for bugs, features, or accessibility requests.
+- **Pull Requests:** Add tests (`python -m unittest discover tests`) and keep functions documented.
+- **Google Summer of Code (INCF):** Use this repo as the working codebase; propose features such as adapted notation exports, new instruments, or UI/UX prototypes.
+- **Good first tasks:**
+  - Improve MusicXML/notation export coverage.
+  - Expand soundfont set and caching.
+  - Add accessibility fixtures (color/size schemas) to visualization.
+  - Write sample prompts + tutorials for common classroom needs.
 
-The application is designed to fail gracefully when errors occur, with no automatic fallbacks. Error messages are displayed to help diagnose issues.
+## Academic & Classroom Use
+- **Research:** The framework can act as a controllable stimulus generator for studies in music learning, HCI, or accessibility. Cite the project and include prompt + parameter logs for reproducibility.
+- **Teaching:** Use the CLI to generate leveled drills, rhythm patterns, or call/response material. Export MIDI/MP3 for LMS uploads or play-alongs.
+- **Case studies:** Phase 2 focuses on participatory design with L’Arche London; we’re eager to partner on parallel studies—open an issue to discuss protocols and ethics.
 
+## Roadmap (2025–2026)
+- Phase 1: Robust generative backend, multiple representations, automated tests and docs.
+- Phase 2: Co-designed interfaces in community settings; accessibility feature hardening (Braille, haptics, enlarged/colored notation presets).
+- Stretch: Web service wrapper + auth, educator-facing prompt templates, dataset of vetted exercises.
 
+## Community Principles
+- Accessibility and inclusion first; avoid ableist defaults.
+- Transparent pedagogy: generated outputs must be explainable and editable by teachers.
+- Collaboration over competition: academic + open-source contributions are equally valued.
+- Ethical AI use: no hidden data collection; prioritize user consent and agency.
 
+## Demo & Links
+- Hugging Face space (prototype): https://huggingface.co/spaces/SHIKARICHACHA/adaptive-music-exercise-generator
+- INCF GSoC 2025 project page (coming from proposal)—watch issues for updates.
+
+## Contact
+Open an issue for feature requests or email the maintainer team via GitHub profiles. If you’re proposing a study or classroom deployment, include timeline, site, and accessibility goals so we can align support.
