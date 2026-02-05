@@ -1,4 +1,4 @@
-# Contributor Mini-Project: JSON → Western Notation (Browser)
+# Notation Challenge: JSON → Western Notation (Browser)
 
 **Goal**  
 Prototype a browser-based renderer that turns HarmonyHub’s generated JSON exercises into standard Western staff notation.
@@ -18,9 +18,9 @@ The CLI currently produces JSON ➜ MIDI ➜ MP3/piano-roll visualization. Weste
 - Implement a minimal web page or component that renders a supplied JSON file/string.
 - Document design/technical choices and integration points.
 
-**Deliverable for your PR**
-- Working prototype (HTML/JS or TS) committed to the repo (a small demo page is fine).
-- Short write-up (max ~1 page) in your PR description covering:
+**Deliverable**
+- A small prototype (HTML/JS or TS) in the repo that renders a generated exercise in notation.
+- A short write-up (max ~1 page) alongside the prototype or in the PR description covering:
   - Approach and mapping decisions
   - Libraries/tools used and how it could plug into the current pipeline
   - Challenges or musical edge cases
