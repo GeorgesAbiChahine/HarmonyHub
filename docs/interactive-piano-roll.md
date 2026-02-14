@@ -7,7 +7,7 @@ Current piano-roll output is a static PNG. It does not support playback tracking
 Build an interactive piano-roll visualization synchronized with exercise audio playback.
 
 ## MVP Scope
-- Render note bars from generated JSON (`note`, `duration`, `cumulative_duration`).
+- Render note bars from generated MIDI (timing and pitch from note events).
 - Add a moving playhead synchronized with audio current time.
 - Add a sliding/scrolling time window during playback.
 - Support play/pause/seek and keep visualization in sync.
@@ -24,7 +24,7 @@ Build an interactive piano-roll visualization synchronized with exercise audio p
 - Seek in audio updates playhead immediately.
 - Works on desktop and mobile browser.
 - Handles at least 4-8 measures without frame drops.
-- Clear fallback behavior when JSON/audio is missing.
+- Clear error handling when MIDI/audio assets are missing or invalid.
 
 ## Non-Goals (for this issue)
 - Full notation engraving.
@@ -34,4 +34,4 @@ Build an interactive piano-roll visualization synchronized with exercise audio p
 ## Implementation Notes
 - Start with a minimal browser prototype (Canvas or SVG).
 - Keep it modular so it can later replace/extend static PNG flow.
-- Include one sample JSON+audio pair for testing.
+- Include one sample MIDI+audio pair for testing.
