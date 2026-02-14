@@ -61,6 +61,7 @@ python cli.py info
 
 ## Repo Structure
 ```
+├── LICENSE                   # AGPL-3.0 license text
 ├── lib/
 │   └── music_generation/
 │       ├── constants.py      # Config + URLs for models/soundfonts
@@ -70,6 +71,12 @@ python cli.py info
 │   ├── midi/converter.py     # JSON → MIDI
 │   ├── audio/converter.py    # MIDI → MP3 (soundfonts + fallback)
 │   └── visualization/visualizer.py  # Piano roll render
+├── docs/                     # Contributor issue/specification docs
+│   ├── notation-challenge.md
+│   ├── interactive-piano-roll.md
+│   ├── braille-notation-output.md
+│   ├── voice-prompt-input.md
+│   └── roadmap.md
 ├── cli.py                    # Typer-based CLI
 ├── tests/                    # Unit tests
 ├── requirements.txt
