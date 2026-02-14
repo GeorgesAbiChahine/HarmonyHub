@@ -1,6 +1,6 @@
-# HarmonyHub: Adaptive, Accessible Music Practice
+# HarmonyHub: Adaptive Music Exercise Generator
 
-Open-source toolkit for generating **inclusive, pedagogically sound music exercises** from structured prompts. HarmonyHub pairs rule-based + AI-assisted generation with accessibility-first outputs (MIDI/MP3/JSON/notation variants) to support teachers, students, and researchers.
+Open-source toolkit for generating structured music exercises from pedagogical and musical inputs. HarmonyHub is designed as an adaptable digital music book that can support teaching, practice, and research workflows.
 
 > Built in the open with INCF / Google Summer of Code 2025 roots—now welcoming contributors, classrooms, and research partners.
 
@@ -10,20 +10,22 @@ Open-source toolkit for generating **inclusive, pedagogically sound music exerci
 - [Repo Structure](#repo-structure)
 - [Contribute](#contribute)
 - [Academic & Classroom Use](#academic--classroom-use)
-- [Roadmap](#roadmap)
 - [Community Principles](#community-principles)
+- [Demo & Links](#demo--links)
+- [License](#license)
 
 ## Why HarmonyHub
-Traditional method books assume a “standard” learner. HarmonyHub flips that by generating practice materials that adapt to the learner: key, level, time signature, focus, and accessibility needs. Outputs can be visual, auditory, or multi-sensory—ready for classrooms, community music programs, or individual study.
+Instrument-learning materials are often static and difficult to adapt to different contexts. HarmonyHub approaches this as a generative system: users provide musical parameters (or text instructions), and the system produces machine-readable and playable exercises that can be reused in teaching and research.
 
 ## Features at a Glance
-- 🎛️ Promptable exercise generation via CLI (instrument, level, key, time signature, measures).
-- 🎼 Outputs today: JSON note data, MIDI, MP3 audio (soundfonts or fallback), and piano-roll visualization when requested.
-- 🎚️ Utilities: metronome generator; JSON→MIDI/MP3 converter.
-- 🧰 Modular Python library + Typer CLI for quick experiments and scripting.
+- Parameterized generation via CLI: instrument, difficulty level, tonality/key, time signature, exercise length (measures), tempo, and optional text prompt.
+- Current outputs: structured JSON (`note`, `duration`, `cumulative_duration`), MIDI, MP3, and piano-roll PNG visualization.
+- Backend model path: Mistral API integration in the generation pipeline.
+- Utilities: metronome generation and JSON-to-MIDI/MP3 conversion.
+- Architecture: Typer CLI with modular Python packages for generation and processing.
 
-### Direction (theory + roadmap, not yet shipped)
-Grounded in disability studies and inclusive music pedagogy, HarmonyHub aims to add adaptable notation, accessibility-aware representations, and richer pedagogical controls. Those pieces are under active design and tracked in issues/roadmap.
+### Project Direction (not yet implemented)
+The broader research direction is to expand both inputs and outputs: richer multimodal inputs (for example speech or musical inputs), additional model backends, and alternative output representations such as Braille notation, talking-score style outputs, color-coded notation, and richer interactive visualizations.
 
 ## Get Started
 Prereqs: Python 3.10+ recommended; `fluidsynth` optional but improves audio quality.
@@ -91,11 +93,6 @@ We welcome open-source contributors, students, and mentors.
 - **Teaching:** Use the CLI to generate leveled drills, rhythm patterns, or call/response material. Export MIDI/MP3 for LMS uploads or play-alongs.
 - **Case studies:** Phase 2 focuses on participatory design in community music settings; we’re eager to partner on parallel studies—open an issue to discuss protocols and ethics.
 
-## Roadmap (2025–2026)
-- Phase 1: Robust generative backend, multiple representations, automated tests and docs.
-- Phase 2: Co-designed interfaces in community settings; accessibility feature hardening (Braille, haptics, enlarged/colored notation presets).
-- Stretch: Web service wrapper + auth, educator-facing prompt templates, dataset of vetted exercises.
-
 ## Community Principles
 - Accessibility and inclusion first; avoid ableist defaults.
 - Transparent pedagogy: generated outputs must be explainable and editable by teachers.
@@ -105,6 +102,10 @@ We welcome open-source contributors, students, and mentors.
 ## Demo & Links
 - Hugging Face space (prototype): https://huggingface.co/spaces/SHIKARICHACHA/adaptive-music-exercise-generator
 - INCF GSoC 2025 project page (coming from proposal)—watch issues for updates.
+
+## License
+This repository is licensed under the GNU Affero General Public License v3.0 (`AGPL-3.0`).
+See `LICENSE` for the full license text.
 
 ## Contact
 Open an issue for feature requests or email the maintainer team via GitHub profiles. If you’re proposing a study or classroom deployment, include timeline, site, and accessibility goals so we can align support.
