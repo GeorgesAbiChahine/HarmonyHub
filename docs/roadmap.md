@@ -80,6 +80,7 @@
 - Goal: Prototype non-text input paths (for example speech instructions or musical input).
 - Dependencies: F1
 - Issue: pending
+- Related doc: `docs/voice-prompt-input.md`
 
 ### B2. Talking-score style output
 - Status: `idea`
