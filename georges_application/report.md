@@ -4,6 +4,16 @@
 **Date:** March 5, 2026  
 **Issue:** #1 - JSON to Western Staff Notation rendering in the browser
 
+**Github Repo Link**: https://github.com/GeorgesAbiChahine/HarmonyHub 
+
+## 0. Try it out for yourself
+1. Go to the github repository.
+2. Go to the folder "georges_application".
+3. Right click "index.html".
+4. Click on "Open Preview".
+5. Write a structured JSON.
+6. Click on the Render Button.
+
 ## 1. Approach
 
 The objective is to convert HarmonyHub's generative AI structured JSON output into standard Western staff notation. The JSON output currently represents musical events as pairs of pitches and durations (e.g., `["C4", 2]` or `{"note": "C4", "duration": 2}`). The duration unit corresponds to an 8th note.
@@ -21,13 +31,9 @@ The implementation relies on **VexFlow**, a robust, industry-standard JavaScript
 
 **System Architecture diagram:**
 
-```mermaid
-graph LR
-    A[Generative AI API] -->|JSON Data| B(HarmonyHub Backend)
-    B -->|Gradio gr.HTML| C[Browser DOM]
-    C -->|Parse JSON| D[VexFlow JS Script]
-    D -->|Render| E((SVG Staff Notation))
-```
+![Diagram](image.png)
+
+_Note: If your viewer doesn't support Mermaid natively, here is the rendered [SVG Diagram](https://mermaid.live/edit#pako:eNpFkctuwjAQRX_FmhWVQhSaBySLSoS0QFUeahCL1l24iRMiiI0Gp0CBf68TaOuVZ3zP3GvNCRKZcggg28h9smKoyCKigujTf6cw5IIjU8UXJ_0x6c_HFD5Iu_1wpvAcz6YkYopROJOwRWHEsJTiOKo-SciSNRcphbvrqPDGDJGlhSQ5mqPF5KUGB9okRLnfcSTRbKLHX4nBjZgz3HFSe9XqSKuX_PCks-oeiRMstuqPiW7Mq7bmWOsfWzpXvBySWLEsI1Op9F-k0LmaYGBAjkUKgcKKG1ByLFldwql-paBWvOQUAn1NGa4pUHHRzJaJNynLXwxlla8gyNhmp6tqmzLFo4LlyP4lTaKBrISCwHacZgYEJzjo0vVNz3Jtx_O6vtfrugYcIeh0TNeyLLvb8e17v2c7FwO-G1PLbDQ8LZTEyXV5zQ4vPx9ni60)_
 
 To see the prototype code, check out `index.html` in this directory.
 
