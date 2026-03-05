@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HarmonyHub VexFlow Prototype</title>
+    <!-- Load VexFlow -->
+    <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 50px;
+      }
+      #vexflow-output {
+        border: 1px solid #ccc;
+        padding: 20px;
+        background-color: #fafafa;
+        border-radius: 8px;
+      }
+      .data-display {
+        margin-top: 20px;
+        background: #eee;
+        padding: 10px;
+        border-radius: 4px;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>HarmonyHub VexFlow Rendering Prototype</h2>
+    <div id="vexflow-output"></div>
+
+    <div class="data-display">
+      <strong>Input JSON Data:</strong><br />
+      <code>[["C4", 2], ["D#4", 2], ["E4", 4]]</code>
+    </div>
+
+    <script>
+      const VF = Vex.Flow;
+
+      // This simulates the payload injected by the generative Python backend
+      const exerciseData = [
+        ["C4", 2],
+        ["D#4", 2],
+        ["E4", 4],
+      ];
+
+      const div = document.getElementById("vexflow-output");
+
+      // Initialize Renderer
+      const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
+      renderer.resize(450, 150);
+      const context = renderer.getContext();
+
+      // Create a Stave
+      const stave = new VF.Stave(10, 20, 400);
+      stave.addClef("treble").addTimeSignature("4/4");
+      stave.setContext(context).draw();
+
+      // Map integer duration (in 8th notes) to VexFlow string tokens
+      const durMap = {
+        1: "8",
+        2: "q",
+        3: "qd",
+        4: "h",
+        6: "hd",
+        8: "w",
+      };
+
+      // Convert data array into VexFlow StaveNotes
+      const notes = exerciseData.map((item) => {
+        // Convert HarmonyHub Pitch (e.g. "C#4") to VexFlow key format (e.g. "c#/4")
+        let rawPitch = item[0].toLowerCase();
+        let pitch = rawPitch.replace(/(\w)(#|b)?(\d)/, "$1$2/$3");
+
+        // Map duration
+        let durationToken = durMap[item[1]] || "q"; // Default to a quarter note fallback
+
+        // Build note
+        let staveNote = new VF.StaveNote({
+          clef: "treble",
+          keys: [pitch],
+          duration: durationToken,
+        });
+
+        // Attach accidentals if present
+        if (rawPitch.includes("#")) {
+          staveNote.addModifier(new VF.Accidental("#"));
+        } else if (rawPitch.includes("b")) {
+          staveNote.addModifier(new VF.Accidental("b"));
+        }
+
+        return staveNote;
+      });
+
+      // Create a Voice in 4/4
+      const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
+      voice.addTickables(notes);
+
+      // Format and justify the notes to fit 350 pixels
+      new VF.Formatter().joinVoices([voice]).format([voice], 350);
+
+      // Draw the voice
+      voice.draw(context, stave);
+    </script>
+  </body>
+</html>
