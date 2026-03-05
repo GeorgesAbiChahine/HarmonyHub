@@ -13,19 +13,68 @@
         flex-direction: column;
         align-items: center;
         margin-top: 50px;
+        background-color: #f5f5f5;
+      }
+      h2 {
+        color: #333;
       }
       #vexflow-output {
-        border: 1px solid #ccc;
+        border: 1px solid #ddd;
         padding: 20px;
-        background-color: #fafafa;
+        background-color: #ffffff;
         border-radius: 8px;
+        min-height: 150px;
+        min-width: 500px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        display: flex;
+        justify-content: center;
       }
-      .data-display {
-        margin-top: 20px;
-        background: #eee;
-        padding: 10px;
-        border-radius: 4px;
+      .data-input {
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+        max-width: 600px;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #ddd;
+      }
+      label {
+        margin-bottom: 8px;
+        color: #555;
+      }
+      textarea {
+        padding: 12px;
         font-family: monospace;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        resize: vertical;
+        background-color: #fafafa;
+        font-size: 14px;
+      }
+      button {
+        margin-top: 15px;
+        padding: 12px 15px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: background-color 0.2s;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .error {
+        color: #d32f2f;
+        margin-top: 10px;
+        display: none;
+        font-weight: bold;
+        text-align: center;
       }
     </style>
   </head>
@@ -33,32 +82,29 @@
     <h2>HarmonyHub VexFlow Rendering Prototype</h2>
     <div id="vexflow-output"></div>
 
-    <div class="data-display">
-      <strong>Input JSON Data:</strong><br />
-      <code>[["C4", 2], ["D#4", 2], ["E4", 4]]</code>
+    <div class="data-input">
+      <label for="json-input"
+        ><strong>Paste HarmonyHub JSON Data:</strong></label
+      >
+      <textarea id="json-input" rows="8">
+[
+  ["C4", 2], 
+  ["D#4", 2], 
+  ["E4", 4],
+  ["G4", 4],
+  ["C5", 4]
+]</textarea
+      >
+      <button id="render-btn">Render Notation</button>
+      <div id="error-msg" class="error">Invalid JSON format</div>
     </div>
 
     <script>
       const VF = Vex.Flow;
-
-      // This simulates the payload injected by the generative Python backend
-      const exerciseData = [
-        ["C4", 2],
-        ["D#4", 2],
-        ["E4", 4],
-      ];
-
       const div = document.getElementById("vexflow-output");
-
-      // Initialize Renderer
-      const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
-      renderer.resize(450, 150);
-      const context = renderer.getContext();
-
-      // Create a Stave
-      const stave = new VF.Stave(10, 20, 400);
-      stave.addClef("treble").addTimeSignature("4/4");
-      stave.setContext(context).draw();
+      const jsonInput = document.getElementById("json-input");
+      const renderBtn = document.getElementById("render-btn");
+      const errorMsg = document.getElementById("error-msg");
 
       // Map integer duration (in 8th notes) to VexFlow string tokens
       const durMap = {
@@ -70,41 +116,96 @@
         8: "w",
       };
 
-      // Convert data array into VexFlow StaveNotes
-      const notes = exerciseData.map((item) => {
-        // Convert HarmonyHub Pitch (e.g. "C#4") to VexFlow key format (e.g. "c#/4")
-        let rawPitch = item[0].toLowerCase();
-        let pitch = rawPitch.replace(/(\w)(#|b)?(\d)/, "$1$2/$3");
+      function renderVexFlow(exerciseData) {
+        // Clear previous render and errors
+        div.innerHTML = "";
+        errorMsg.style.display = "none";
 
-        // Map duration
-        let durationToken = durMap[item[1]] || "q"; // Default to a quarter note fallback
+        try {
+          // Initialize Renderer
+          const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
+          renderer.resize(550, 180);
+          const context = renderer.getContext();
 
-        // Build note
-        let staveNote = new VF.StaveNote({
-          clef: "treble",
-          keys: [pitch],
-          duration: durationToken,
-        });
+          // Create a Stave
+          const stave = new VF.Stave(10, 30, 500);
+          stave.addClef("treble").addTimeSignature("4/4");
+          stave.setContext(context).draw();
 
-        // Attach accidentals if present
-        if (rawPitch.includes("#")) {
-          staveNote.addModifier(new VF.Accidental("#"));
-        } else if (rawPitch.includes("b")) {
-          staveNote.addModifier(new VF.Accidental("b"));
+          if (!Array.isArray(exerciseData) || exerciseData.length === 0) {
+            return;
+          }
+
+          // Convert data array into VexFlow StaveNotes
+          const notes = exerciseData.map((item) => {
+            // Extract pitch and duration handling both array and object format
+            let rawPitch, dur;
+            if (Array.isArray(item)) {
+              rawPitch = item[0].toLowerCase();
+              dur = item[1];
+            } else if (typeof item === "object") {
+              rawPitch = item.note.toLowerCase();
+              dur = item.duration;
+            } else {
+              throw new Error("Unrecognized note format");
+            }
+
+            // Convert HarmonyHub Pitch (e.g. "C#4") to VexFlow key format (e.g. "c#/4")
+            let pitch = rawPitch.replace(/(\w)(#|b)?(\d)/, "$1$2/$3");
+
+            // Map duration
+            let durationToken = durMap[dur] || "q"; // Default to a quarter note fallback
+
+            // Build note
+            let staveNote = new VF.StaveNote({
+              clef: "treble",
+              keys: [pitch],
+              duration: durationToken,
+            });
+
+            // Attach accidentals if present
+            if (rawPitch.includes("#")) {
+              staveNote.addModifier(new VF.Accidental("#"));
+            } else if (rawPitch.includes("b")) {
+              staveNote.addModifier(new VF.Accidental("b"));
+            }
+
+            return staveNote;
+          });
+
+          // Create a Voice.
+          // We set strict to false so VexFlow doesn't throw an error if the
+          // total duration of notes doesn't perfectly match a 4/4 measure.
+          const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
+          voice.setStrict(false);
+          voice.addTickables(notes);
+
+          // Format and justify the notes to fit within the stave width (500 - padding)
+          new VF.Formatter().joinVoices([voice]).format([voice], 450);
+
+          // Draw the voice
+          voice.draw(context, stave);
+        } catch (err) {
+          console.error(err);
+          errorMsg.innerText = "Error rendering notation: " + err.message;
+          errorMsg.style.display = "block";
         }
+      }
 
-        return staveNote;
+      // Attach event listener
+      renderBtn.addEventListener("click", () => {
+        try {
+          const data = JSON.parse(jsonInput.value);
+          renderVexFlow(data);
+        } catch (e) {
+          errorMsg.innerText =
+            "Invalid JSON format: Please ensure your input is valid JSON.";
+          errorMsg.style.display = "block";
+        }
       });
 
-      // Create a Voice in 4/4
-      const voice = new VF.Voice({ num_beats: 4, beat_value: 4 });
-      voice.addTickables(notes);
-
-      // Format and justify the notes to fit 350 pixels
-      new VF.Formatter().joinVoices([voice]).format([voice], 350);
-
-      // Draw the voice
-      voice.draw(context, stave);
+      // Trigger an initial render on page load
+      renderBtn.click();
     </script>
   </body>
 </html>
